@@ -1,6 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Icon from "../components/ui/Icon";
+import ResponsiveLayout from "../components/layout/ResponsiveLayout";
+import LogoMark from "../components/Logo/LogoMark";
 
 export default function ProfileSummary() {
   const navigate = useNavigate();
@@ -15,7 +17,7 @@ export default function ProfileSummary() {
   ];
 
   return (
-    <main className="profile-summary-page">
+    <ResponsiveLayout className="profile-summary-page">
 
       <header className="onboarding-topbar">
 
@@ -28,7 +30,7 @@ export default function ProfileSummary() {
         </button>
 
         <div className="onboarding-brand">
-          <div className="onboarding-brand-logo">⌣</div>
+          <LogoMark size={31} />
           <span>Onboarding Goals</span>
         </div>
 
@@ -137,6 +139,6 @@ export default function ProfileSummary() {
         Start Learning <Icon name="arrowRight" />
       </button>
 
-    </main>
+    </ResponsiveLayout>
   );
 }

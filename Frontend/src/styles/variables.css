@@ -28,4 +28,12 @@
   --radius-pill: 999px;
 
   --shadow-sm: 0 6px 20px rgba(28, 24, 72, 0.06);
+
+  --page-pad-x: 18px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --page-pad-x: clamp(24px, 4vw, 56px);
+  }
 }

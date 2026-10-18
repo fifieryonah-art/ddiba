@@ -1,12 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Icon from "../components/ui/Icon";
+import ResponsiveLayout from "../components/layout/ResponsiveLayout";
+import LogoMark from "../components/Logo/LogoMark";
 
 export default function OnboardingIntro() {
   const navigate = useNavigate();
 
   return (
-    <main className="onboarding-intro-page">
+    <ResponsiveLayout className="onboarding-intro-page" mode="wide">
 
       <header className="onboarding-topbar">
         <button
@@ -18,7 +20,7 @@ export default function OnboardingIntro() {
         </button>
 
         <div className="onboarding-brand">
-          <div className="onboarding-brand-logo">⌣</div>
+          <LogoMark size={31} />
           <span>Onboarding Goals</span>
         </div>
 
@@ -109,6 +111,6 @@ export default function OnboardingIntro() {
         Skip for now
       </button>
 
-    </main>
+    </ResponsiveLayout>
   );
 }

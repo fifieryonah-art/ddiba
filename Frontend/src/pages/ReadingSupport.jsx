@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Icon from "../components/ui/Icon";
+import ResponsiveLayout from "../components/layout/ResponsiveLayout";
+import LogoMark from "../components/Logo/LogoMark";
 
 const supportOptions = [
   {
@@ -58,7 +60,7 @@ export default function ReadingSupport() {
   };
 
   return (
-    <main className="reading-support-page">
+    <ResponsiveLayout className="reading-support-page">
 
       <header className="onboarding-topbar">
 
@@ -71,7 +73,7 @@ export default function ReadingSupport() {
         </button>
 
         <div className="onboarding-brand">
-          <div className="onboarding-brand-logo">⌣</div>
+          <LogoMark size={31} />
           <span>Onboarding Goals</span>
         </div>
 
@@ -177,6 +179,6 @@ export default function ReadingSupport() {
         Continue <Icon name="arrowRight" />
       </button>
 
-    </main>
+    </ResponsiveLayout>
   );
 }

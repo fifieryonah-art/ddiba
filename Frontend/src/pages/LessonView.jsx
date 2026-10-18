@@ -1,12 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Icon from "../components/ui/Icon";
+import ResponsiveLayout from "../components/layout/ResponsiveLayout";
+import LogoMark from "../components/Logo/LogoMark";
 
 export default function LessonView() {
   const navigate = useNavigate();
 
   return (
-    <main className="lesson-page">
+    <ResponsiveLayout className="lesson-page">
 
       <header className="lesson-header">
         <button
@@ -18,7 +20,7 @@ export default function LessonView() {
         </button>
 
         <div className="lesson-brand">
-          <div className="lesson-logo">⌣</div>
+          <LogoMark size={31} />
           <span>Lesson View</span>
         </div>
 
@@ -202,6 +204,6 @@ export default function LessonView() {
 
       </section>
 
-    </main>
+    </ResponsiveLayout>
   );
 }

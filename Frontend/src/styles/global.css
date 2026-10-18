@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap");
+@import "../components/Logo/logo.css";
 @import "../components/ui/ui.css";
 @import "../components/layout/layout.css";
 @import "../components/learning/learning.css";
@@ -8,13 +10,16 @@
 
 html, body, #root {
   margin: 0;
+  width: 100%;
   min-height: 100%;
-  background: #eceaf3;
+  min-height: 100dvh;
+  background: var(--background);
   color: var(--text-primary);
 }
 
 body {
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 button,
@@ -35,11 +40,12 @@ a {
 
 .app-shell {
   width: 100%;
-  max-width: 430px;
+  max-width: none;
   min-height: 100vh;
-  margin: 0 auto;
+  min-height: 100dvh;
+  margin: 0;
   background: var(--background);
-  padding: 20px 18px 96px;
+  padding: 20px var(--page-pad-x) 96px;
   position: relative;
 }
 
@@ -127,8 +133,8 @@ a {
 /* Phones */
 @media (max-width: 480px) {
   .app-shell {
-    max-width: 100%;
-    padding: 16px 14px 92px;
+    max-width: none;
+    padding: 16px var(--page-pad-x) 92px;
   }
 
   .page-title {
@@ -182,8 +188,8 @@ a {
 /* Tablets */
 @media (min-width: 481px) and (max-width: 900px) {
   .app-shell {
-    max-width: 620px;
-    padding: 24px 22px 100px;
+    max-width: none;
+    padding: 24px var(--page-pad-x) 100px;
   }
 
   .page-title {
@@ -200,21 +206,22 @@ a {
   }
 
   .bottom-nav {
-    width: min(620px, 100%);
+    width: 100%;
   }
 }
 
 /* Desktop */
 @media (min-width: 901px) {
   body {
-    background: #eceaf3;
+    background: var(--background);
   }
 
   .app-shell {
-    max-width: 760px;
-    padding: 30px 34px 110px;
+    max-width: none;
+    padding: 30px var(--page-pad-x) 110px;
     min-height: 100vh;
-    box-shadow: 0 0 30px rgba(30, 27, 75, 0.08);
+    min-height: 100dvh;
+    box-shadow: none;
   }
 
   .page-title {
@@ -235,7 +242,7 @@ a {
   }
 
   .bottom-nav {
-    width: min(760px, 100%);
+    width: 100%;
   }
 
   .card {

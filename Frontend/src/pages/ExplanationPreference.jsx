@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Icon from "../components/ui/Icon";
+import ResponsiveLayout from "../components/layout/ResponsiveLayout";
+import LogoMark from "../components/Logo/LogoMark";
 
 const explanationOptions = [
   {
@@ -49,7 +51,7 @@ export default function ExplanationPreference() {
   };
 
   return (
-    <main className="explanation-page">
+    <ResponsiveLayout className="explanation-page">
 
       <header className="onboarding-topbar">
 
@@ -62,7 +64,7 @@ export default function ExplanationPreference() {
         </button>
 
         <div className="onboarding-brand">
-          <div className="onboarding-brand-logo">⌣</div>
+          <LogoMark size={31} />
           <span>Onboarding Goals</span>
         </div>
 
@@ -172,6 +174,6 @@ export default function ExplanationPreference() {
 
       </div>
 
-    </main>
+    </ResponsiveLayout>
   );
 }

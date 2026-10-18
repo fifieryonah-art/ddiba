@@ -1,3 +1,9 @@
+import ResponsiveLayout from "./ResponsiveLayout";
+
 export default function PageContainer({ children }) {
-  return <main className="app-shell">{children}</main>;
+  return (
+    <ResponsiveLayout className="app-shell">
+      {children}
+    </ResponsiveLayout>
+  );
 }

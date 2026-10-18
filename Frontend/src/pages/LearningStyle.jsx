@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Icon from "../components/ui/Icon";
+import ResponsiveLayout from "../components/layout/ResponsiveLayout";
+import LogoMark from "../components/Logo/LogoMark";
 
 const learningOptions = [
   {
@@ -47,7 +49,7 @@ export default function LearningStyle() {
   };
 
   return (
-    <main className="learning-style-page">
+    <ResponsiveLayout className="learning-style-page">
 
       <header className="onboarding-topbar">
         <button
@@ -59,7 +61,7 @@ export default function LearningStyle() {
         </button>
 
         <div className="onboarding-brand">
-          <div className="onboarding-brand-logo">⌣</div>
+          <LogoMark size={31} />
           <span>Onboarding Goals</span>
         </div>
 
@@ -153,6 +155,6 @@ export default function LearningStyle() {
         Next <Icon name="arrowRight" />
       </button>
 
-    </main>
+    </ResponsiveLayout>
   );
 }

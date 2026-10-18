@@ -1,0 +1,57 @@
+.ddiba-logo-lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ddiba-logo-lockup > svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+.ddiba-logo-lockup__text {
+  display: flex;
+  flex-direction: column;
+}
+
+.ddiba-logo-lockup__wordmark {
+  color: #2d2a6e;
+  font-family: Poppins, sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  line-height: 1;
+}
+
+.ddiba-logo-lockup__tagline {
+  margin-top: 4px;
+  color: #6b6b8a;
+  font-family: Inter, sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.ddiba-logo-lockup__tagline span {
+  color: #f5a623;
+}
+
+.ddiba-logo-lockup--hero {
+  flex-direction: column;
+  gap: 7px;
+}
+
+.ddiba-logo-lockup--hero .ddiba-logo-lockup__text {
+  align-items: center;
+}
+
+.ddiba-logo-lockup--hero .ddiba-logo-lockup__wordmark {
+  font-size: 24px;
+}
+
+.ddiba-logo-lockup--hero .ddiba-logo-lockup__tagline {
+  font-size: 7px;
+  letter-spacing: 1.5px;
+}

@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Icon from "../components/ui/Icon";
+import ResponsiveLayout from "../components/layout/ResponsiveLayout";
+import LogoMark from "../components/Logo/LogoMark";
 
 export default function UploadMaterial() {
   const navigate = useNavigate();
@@ -18,15 +20,13 @@ export default function UploadMaterial() {
   }, [text]);
 
   return (
-    <main className="upload-material-page">
+    <ResponsiveLayout className="upload-material-page">
 
       <header className="upload-main-header">
 
         <div className="upload-brand">
 
-          <div className="upload-logo">
-            ⌣
-          </div>
+          <LogoMark size={39} />
 
           <div className="upload-brand-copy">
             <small>Ddiba</small>
@@ -321,6 +321,6 @@ export default function UploadMaterial() {
 
       </nav>
 
-    </main>
+    </ResponsiveLayout>
   );
 }

@@ -1,12 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Icon from "../components/ui/Icon";
+import ResponsiveLayout from "../components/layout/ResponsiveLayout";
+import LogoMark from "../components/Logo/LogoMark";
 
 export default function SessionSummary() {
   const navigate = useNavigate();
 
   return (
-    <main className="session-summary-page">
+    <ResponsiveLayout className="session-summary-page">
 
       <header className="session-summary-header">
         <button
@@ -18,7 +20,7 @@ export default function SessionSummary() {
         </button>
 
         <div className="session-header-title">
-          <div className="session-logo">⌣</div>
+          <LogoMark size={31} />
           <span>Session Summary</span>
         </div>
 
@@ -160,6 +162,6 @@ export default function SessionSummary() {
 
       </div>
 
-    </main>
+    </ResponsiveLayout>
   );
 }
