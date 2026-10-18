@@ -4,6 +4,7 @@ import Icon from "../components/ui/Icon";
 import ResponsiveLayout from "../components/layout/ResponsiveLayout";
 import PageHeader from "../components/layout/PageHeader";
 import BottomNav from "../components/layout/BottomNav";
+import { apiUrl, authHeaders } from "../api";
 
 const sampleText = "Photosynthesis occurs inside chloroplasts where chlorophyll pigments trap radiant solar photons. This light energy excites electrons within thylakoid membrane protein complexes, initiating photolysis to break water molecules into oxygen gas, protons, and mobile electrons.";
 
@@ -35,9 +36,9 @@ export default function UploadMaterial() {
     if (!text.trim()) return;
     setIsTransforming(true);
     try {
-      const response = await fetch("/api/adapt-lesson/", {
+      const response = await fetch(apiUrl("/api/adapt-lesson/"), {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: authHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({ text, preferences: { subject, mode: "simplify" } }),
       });
       if (!response.ok) throw new Error("Adapt lesson request failed");

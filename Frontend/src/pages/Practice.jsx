@@ -4,6 +4,7 @@ import Icon from "../components/ui/Icon";
 import ResponsiveLayout from "../components/layout/ResponsiveLayout";
 import PageHeader from "../components/layout/PageHeader";
 import BottomNav from "../components/layout/BottomNav";
+import { apiUrl, authHeaders } from "../api";
 
 const fallbackQuestions = [
   {
@@ -26,9 +27,9 @@ export default function Practice() {
   useEffect(() => {
     let cancelled = false;
 
-    fetch("/api/practice-questions/", {
+    fetch(apiUrl("/api/practice-questions/"), {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify({
         adapted_text: "Photosynthesis uses sunlight, water, and carbon dioxide to make glucose and oxygen.",
       }),

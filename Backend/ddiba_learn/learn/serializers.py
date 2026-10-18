@@ -31,3 +31,6 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError("This user account is inactive.")
         attrs["user"] = user
         return attrs
+
+class GoogleLoginSerializer(serializers.Serializer):
+    credential = serializers.CharField()
