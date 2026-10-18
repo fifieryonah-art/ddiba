@@ -1,0 +1,43 @@
+.mastery-ring {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  margin: 18px auto;
+}
+.mastery-ring-inner {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: white;
+  display: grid;
+  place-items: center;
+  align-content: center;
+}
+.mastery-ring-inner strong {
+  font-size: 28px;
+  color: var(--primary);
+}
+.mastery-ring-inner span {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.topic-progress { display: grid; gap: 8px; }
+.topic-progress-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+}
+.flashcard {
+  min-height: 380px;
+  background: white;
+  border-radius: 28px;
+  border: 1px solid var(--border);
+  padding: 26px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+}
