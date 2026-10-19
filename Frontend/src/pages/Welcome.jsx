@@ -8,102 +8,77 @@ export default function Welcome() {
   const navigate = useNavigate();
 
   const brandPanel = (
-    <section className="welcome-brand-panel">
+    <section className="prototype-welcome-brand">
+      <div className="prototype-welcome-tag">
+        <Icon name="leaf" />
+        <span>Gentle Pace</span>
+      </div>
 
-      {/* Top */}
-      <header className="welcome-header">
-        <span className="gentle-pill">
-          <Icon name="leaf" /> Gentle Pace
+      <div className="prototype-welcome-visual">
+        <span className="prototype-welcome-chip prototype-welcome-chip--stories">
+          <Icon name="book" /> Stories &amp; Text
         </span>
-      </header>
-
-      {/* Hero */}
-      <section className="welcome-hero-section">
-
-        <span className="floating-chip chip-stories">
-          <Icon name="book" /> Stories & Text
-        </span>
-
-        <span className="floating-chip chip-ai">
+        <span className="prototype-welcome-chip prototype-welcome-chip--ai">
           <Icon name="sparkle" /> AI Tailored
         </span>
 
-        <span className="sparkle-bubble">
-          <Icon name="sparkle" />
-        </span>
-
-          <div className="welcome-hero-circle">
-            <LogoLockup markSize={72} className="ddiba-logo-lockup--hero" />
+        <div className="prototype-welcome-circle">
+          <LogoLockup markSize={98} className="prototype-welcome-lockup" />
+          <span className="prototype-welcome-sparkle"><Icon name="sparkle" /></span>
         </div>
 
-        <span className="floating-chip chip-mindmaps">
+        <span className="prototype-welcome-chip prototype-welcome-chip--mindmaps">
           <Icon name="network" /> Mindmaps
         </span>
-
-        <span className="floating-chip chip-visuals">
+        <span className="prototype-welcome-chip prototype-welcome-chip--visuals">
           <Icon name="lightbulb" /> Quick Visuals
         </span>
+      </div>
 
-      </section>
-
-      <span className="stress-pill">
+      <span className="prototype-welcome-stress">
         <Icon name="sparkle" /> Stress-Free Study
       </span>
-
     </section>
   );
 
   const contentPanel = (
-    <section className="welcome-content-panel">
-
-      <div className="welcome-content-main">
-        {/* Main text */}
-        <section className="welcome-text">
-          <h1>Learn your way.</h1>
-
-          <p>
-            An AI learning companion that adapts
-            to how you learn—without judgment or
-            rush.
-          </p>
-        </section>
-
-        {/* Buttons */}
-        <div className="welcome-actions">
-
-          <button
-            className="welcome-btn primary"
-            onClick={() => navigate("/auth")}
-          >
-            Get Started
-            <Icon name="arrowRight" />
-          </button>
-
-          <button
-            className="welcome-btn secondary"
-            onClick={() => navigate("/auth")}
-          >
-            Log In
-          </button>
-
-        </div>
-      </div>
-
-      {/* Bottom reassurance */}
-      <div className="welcome-reassurance">
-        <span className="reassurance-icon"><Icon name="sparkle" /></span>
-
+    <section className="prototype-welcome-content">
+      <div className="prototype-welcome-copy">
+        <h1>Learn your way.</h1>
         <p>
-          Learning should adapt to the learner.
+          An AI learning companion that adapts to how you learn without
+          judgment, pressure, or rushing.
         </p>
       </div>
 
+      <section className="prototype-welcome-why">
+        <h2>Why Ddiba?</h2>
+        <p>
+          Traditional learning material often assumes every student learns the
+          same way. Ddiba helps remove those barriers for students who process
+          information differently, including students with dyslexia.
+        </p>
+      </section>
+
+      <div className="prototype-welcome-actions">
+        <button type="button" onClick={() => navigate("/auth")}>
+          Get Started <Icon name="arrowRight" />
+        </button>
+        <button type="button" onClick={() => navigate("/auth")}>
+          Log In
+        </button>
+      </div>
+
+      <div className="prototype-welcome-reassurance">
+        <Icon name="shield" />
+        <span>Designed with and for neurodivergent learners</span>
+      </div>
     </section>
   );
 
   return (
     <ResponsiveLayout
-      className="welcome-page"
+      className="welcome-page prototype-welcome-page"
       mode="split"
       left={brandPanel}
       right={contentPanel}

@@ -2,183 +2,69 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Icon from "../components/ui/Icon";
 import ResponsiveLayout from "../components/layout/ResponsiveLayout";
-import LogoMark from "../components/Logo/LogoMark";
+import PageHeader from "../components/layout/PageHeader";
 
 const supportOptions = [
-  {
-    id: "largerText",
-    icon: "list",
-    title: "Larger text",
-    description:
-      "Increase baseline body font size to make reading feel easier and clearer.",
-  },
-  {
-    id: "spacing",
-    icon: "spacing",
-    title: "More spacing",
-    description:
-      "Add more line and word spacing to reduce visual crowding.",
-  },
-  {
-    id: "shortParagraphs",
-    icon: "list",
-    title: "Shorter paragraphs",
-    description:
-      "Break dense blocks of text into smaller, easier-to-process sections.",
-  },
-  {
-    id: "highlight",
-    icon: "pencil",
-    title: "Highlight words",
-    description:
-      "Gently emphasize key terms and important concepts.",
-  },
-  {
-    id: "readAloud",
-    icon: "volume",
-    title: "Read aloud",
-    description:
-      "Use natural speech to listen to explanations and study material.",
-  },
+  { id: "largerText", icon: "type", title: "Larger text", description: "Increase body font size to make letters crisper." },
+  { id: "spacing", icon: "spacing", title: "More spacing", description: "Add line and letter spacing to reduce crowding." },
+  { id: "shortParagraphs", icon: "list", title: "Shorter paragraphs", description: "Break dense blocks into small digestible units." },
+  { id: "highlightWords", icon: "pencil", title: "Highlight key words", description: "Gently emphasize core vocabulary and nouns." },
 ];
 
 export default function ReadingSupport() {
   const navigate = useNavigate();
+  const [settings, setSettings] = useState({
+    largerText: false,
+    spacing: false,
+    shortParagraphs: true,
+    highlightWords: true,
+  });
 
-  const [enabled, setEnabled] = useState([
-    "largerText",
-    "spacing",
-    "shortParagraphs",
-  ]);
-
-  const toggleSupport = (id) => {
-    setEnabled((current) =>
-      current.includes(id)
-        ? current.filter((item) => item !== id)
-        : [...current, id]
-    );
+  const toggleSetting = (id) => {
+    setSettings((current) => ({ ...current, [id]: !current[id] }));
   };
 
   return (
-    <ResponsiveLayout className="reading-support-page">
-
-      <header className="onboarding-topbar">
-
-        <button
-          className="onboarding-back-btn"
-          onClick={() => navigate("/onboarding/explanations")}
-          aria-label="Go back"
-        >
-          <Icon name="arrowLeft" />
-        </button>
-
-        <div className="onboarding-brand">
-          <LogoMark size={31} />
-          <span>Onboarding Goals</span>
-        </div>
-
-        <div className="onboarding-avatar">S</div>
-
-      </header>
+    <ResponsiveLayout className="reading-support-page prototype-reading-support-page">
+      <PageHeader title="Sensory Support" backTo="/onboarding/explanations" />
 
       <section className="reading-progress">
-
-        <div className="reading-progress-top">
-          <span>STEP 3 OF 4</span>
-          <span>75% Complete</span>
-        </div>
-
-        <div className="reading-progress-track">
-          <div className="reading-progress-fill"></div>
-        </div>
-
+        <div className="reading-progress-top"><span>STEP 3 OF 4</span><span>75% Complete</span></div>
+        <div className="reading-progress-track"><div className="reading-progress-fill"></div></div>
       </section>
 
       <section className="reading-heading">
-
-        <h1>
-          What makes reading
-          <br />
-          easier for you?
-        </h1>
-
-        <p>
-          Sensory and accessibility controls designed
-          for focus and low fatigue.
-        </p>
-
+        <h1>What makes reading easier for you?</h1>
+        <p>Sensory and accessibility controls designed for focus and low eye fatigue.</p>
       </section>
 
       <section className="reading-preview-card">
-
         <div className="reading-preview-top">
-
-          <span className="preview-label">
-            <Icon name="sparkle" /> Live Preview
-          </span>
-
-          <span className="calm-mode-pill">
-            Calm Mode
-          </span>
-
+          <span className="preview-label"><Icon name="sparkle" /> Live Preview</span>
+          <span className="calm-mode-pill">Calm Mode Active</span>
         </div>
-
-        <p>
-          Neurodiversity-first learning reduces
-          cognitive friction. Every thought flows
-          clearly and patiently.
+        <p className={`${settings.largerText ? "reading-preview-large" : ""} ${settings.spacing ? "reading-preview-spaced" : ""}`}>
+          Neurodiversity-first learning reduces {settings.highlightWords ? <strong>cognitive friction</strong> : "cognitive friction"}.
+          {settings.shortParagraphs && <> Every thought flows clearly, gently, and without rushing your brain.</>}
         </p>
-
       </section>
 
       <section className="reading-support-list">
-
         {supportOptions.map((option) => {
-          const isEnabled = enabled.includes(option.id);
-
+          const isEnabled = settings[option.id];
           return (
-            <button
-              key={option.id}
-              type="button"
-              className="reading-support-card"
-              onClick={() => toggleSupport(option.id)}
-            >
-
-              <div className="reading-support-icon">
-                <Icon name={option.icon} />
-              </div>
-
-              <div className="reading-support-copy">
-
-                <h3>{option.title}</h3>
-
-                <p>{option.description}</p>
-
-              </div>
-
-              <div
-                className={`reading-toggle ${
-                  isEnabled ? "active" : ""
-                }`}
-              >
-                <span>
-                  {isEnabled ? "✓" : ""}
-                </span>
-              </div>
-
+            <button type="button" key={option.id} className="reading-support-card" onClick={() => toggleSetting(option.id)}>
+              <div className="reading-support-icon"><Icon name={option.icon} /></div>
+              <div className="reading-support-copy"><h3>{option.title}</h3><p>{option.description}</p></div>
+              <div className={`reading-toggle ${isEnabled ? "active" : ""}`}><span>{isEnabled ? "✓" : ""}</span></div>
             </button>
           );
         })}
-
       </section>
 
-      <button
-        className="reading-continue-btn"
-        onClick={() => navigate("/onboarding/profile")}
-      >
+      <button className="reading-continue-btn" onClick={() => navigate("/onboarding/profile")}>
         Continue <Icon name="arrowRight" />
       </button>
-
     </ResponsiveLayout>
   );
 }

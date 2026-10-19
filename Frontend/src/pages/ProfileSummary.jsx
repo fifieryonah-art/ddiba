@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Icon from "../components/ui/Icon";
 import ResponsiveLayout from "../components/layout/ResponsiveLayout";
-import LogoMark from "../components/Logo/LogoMark";
+import PageHeader from "../components/layout/PageHeader";
 
 export default function ProfileSummary() {
   const navigate = useNavigate();
@@ -19,24 +19,7 @@ export default function ProfileSummary() {
   return (
     <ResponsiveLayout className="profile-summary-page">
 
-      <header className="onboarding-topbar">
-
-        <button
-          className="onboarding-back-btn"
-          onClick={() => navigate("/onboarding/reading-support")}
-          aria-label="Go back"
-        >
-          <Icon name="arrowLeft" />
-        </button>
-
-        <div className="onboarding-brand">
-          <LogoMark size={31} />
-          <span>Onboarding Goals</span>
-        </div>
-
-        <div className="onboarding-avatar">S</div>
-
-      </header>
+      <PageHeader title="Onboarding Goals" backTo="/onboarding/reading-support" />
 
       <section className="profile-progress">
 

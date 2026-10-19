@@ -9,6 +9,10 @@ npm install
 npm run dev
 ```
 
+For Google sign-in, create a local `.env` file with `VITE_GOOGLE_CLIENT_ID` set to the OAuth web client ID configured for the frontend origin.
+
+For Render, set `VITE_API_URL` to the deployed Django API URL and add the Render frontend URL as an authorized JavaScript origin in Google Cloud Console.
+
 ## Main routes
 
 - `/` Welcome

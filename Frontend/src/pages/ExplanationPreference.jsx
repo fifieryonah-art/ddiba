@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Icon from "../components/ui/Icon";
 import ResponsiveLayout from "../components/layout/ResponsiveLayout";
-import LogoMark from "../components/Logo/LogoMark";
+import PageHeader from "../components/layout/PageHeader";
 
 const explanationOptions = [
   {
@@ -53,24 +53,7 @@ export default function ExplanationPreference() {
   return (
     <ResponsiveLayout className="explanation-page">
 
-      <header className="onboarding-topbar">
-
-        <button
-          className="onboarding-back-btn"
-          onClick={() => navigate("/onboarding/learning-style")}
-          aria-label="Go back"
-        >
-          <Icon name="arrowLeft" />
-        </button>
-
-        <div className="onboarding-brand">
-          <LogoMark size={31} />
-          <span>Onboarding Goals</span>
-        </div>
-
-        <div className="onboarding-avatar">S</div>
-
-      </header>
+      <PageHeader title="Onboarding Goals" backTo="/onboarding/learning-style" />
 
       <section className="explanation-progress">
 

@@ -2,32 +2,38 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Icon from "../components/ui/Icon";
 import ResponsiveLayout from "../components/layout/ResponsiveLayout";
-import LogoMark from "../components/Logo/LogoMark";
+import PageHeader from "../components/layout/PageHeader";
 
 const learningOptions = [
   {
-    id: "short",
-    icon: "pencil",
-    title: "Short explanations",
-    description: "Bite-sized summaries without jargon",
+    id: "visual",
+    icon: "network",
+    title: "Visual & Diagrams",
+    description: "Mindmaps, flowcharts, and visual metaphors over blocks of dense text.",
   },
   {
-    id: "steps",
+    id: "stepByStep",
     icon: "list",
-    title: "Step-by-step",
-    description: "Sequential, bite-sized stages",
+    title: "Step-by-Step",
+    description: "Bite-sized sequential chunks that break big ideas into 1-2-3 paths.",
   },
   {
-    id: "examples",
-    icon: "lightbulb",
-    title: "Examples",
-    description: "Real-world analogies and stories",
+    id: "stories",
+    icon: "book",
+    title: "Stories & Analogies",
+    description: "Relatable comparisons (like thinking of a cell as a solar bakery).",
   },
   {
-    id: "listening",
+    id: "plain",
+    icon: "pencil",
+    title: "Plain & Direct",
+    description: "Clear, crisp sentences without academic jargon or unnecessary filler.",
+  },
+  {
+    id: "audio",
     icon: "volume",
-    title: "Listening",
-    description: "Audio explanations and voice narration",
+    title: "Audio & Listening",
+    description: "Listen to explanations read aloud with calm, unhurried pacing.",
   },
 ];
 
@@ -35,9 +41,9 @@ export default function LearningStyle() {
   const navigate = useNavigate();
 
   const [selected, setSelected] = useState([
-    "short",
-    "steps",
-    "examples",
+    "visual",
+    "stepByStep",
+    "stories",
   ]);
 
   const toggleOption = (id) => {
@@ -51,31 +57,13 @@ export default function LearningStyle() {
   return (
     <ResponsiveLayout className="learning-style-page">
 
-      <header className="onboarding-topbar">
-        <button
-          className="onboarding-back-btn"
-          onClick={() => navigate("/onboarding")}
-          aria-label="Go back"
-        >
-          <Icon name="arrowLeft" />
-        </button>
-
-        <div className="onboarding-brand">
-          <LogoMark size={31} />
-          <span>Onboarding Goals</span>
-        </div>
-
-        <div className="onboarding-avatar">S</div>
-      </header>
+      <PageHeader title="Learning Profile" backTo="/onboarding" />
 
       <section className="learning-progress-section">
 
         <div className="learning-progress-top">
           <span>STEP 1 OF 4</span>
-
-          <span className="personalisation-label">
-            <Icon name="leaf" /> Personalization
-          </span>
+          <span>25% COMPLETE</span>
         </div>
 
         <div className="learning-progress-track">
@@ -85,25 +73,12 @@ export default function LearningStyle() {
       </section>
 
       <section className="learning-style-heading">
-        <h1>How do you learn best?</h1>
+        <h1>How does information click best for you?</h1>
 
         <p>
-          Choose everything that helps you understand.
+          Select anything that makes sense to you. Choose as many as you like.
         </p>
       </section>
-
-      <div className="multi-select-info">
-
-        <span>
-          <Icon name="lightbulb" /> Multi-select enabled • Tailors your tutor voice
-        </span>
-
-        <strong>
-          {selected.length}
-          <small>selected</small>
-        </strong>
-
-      </div>
 
       <section className="learning-options">
 
@@ -120,26 +95,22 @@ export default function LearningStyle() {
               onClick={() => toggleOption(option.id)}
             >
 
-              <div className="learning-option-top">
-
-                <div className="learning-option-icon">
-                  <Icon name={option.icon} />
-                </div>
-
-                <div
-                  className={`learning-check ${
-                    isSelected ? "active" : ""
-                  }`}
-                >
-                  {isSelected ? "✓" : ""}
-                </div>
-
+              <div className="learning-option-icon">
+                <Icon name={option.icon} />
               </div>
 
               <div className="learning-option-copy">
                 <h3>{option.title}</h3>
 
                 <p>{option.description}</p>
+              </div>
+
+              <div
+                className={`learning-check ${
+                  isSelected ? "active" : ""
+                }`}
+              >
+                {isSelected ? "✓" : ""}
               </div>
 
             </button>
@@ -150,7 +121,12 @@ export default function LearningStyle() {
 
       <button
         className="learning-next-btn"
-        onClick={() => navigate("/onboarding/explanations")}
+        disabled={selected.length === 0}
+        onClick={() => {
+          if (selected.length > 0) {
+            navigate("/onboarding/explanations");
+          }
+        }}
       >
         Next <Icon name="arrowRight" />
       </button>

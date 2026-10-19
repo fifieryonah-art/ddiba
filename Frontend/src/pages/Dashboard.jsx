@@ -2,7 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Icon from "../components/ui/Icon";
 import ResponsiveLayout from "../components/layout/ResponsiveLayout";
-import LogoMark from "../components/Logo/LogoMark";
+import BottomNav from "../components/layout/BottomNav";
+import PageHeader from "../components/layout/PageHeader";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -10,26 +11,18 @@ export default function Dashboard() {
   const days = ["M", "T", "W", "T", "F", "S", "S"];
 
   return (
-    <ResponsiveLayout className="dashboard-page">
-      <header className="dashboard-header">
-        <div className="dashboard-brand">
-          <LogoMark size={39} />
-
-          <div className="dashboard-brand-copy">
-            <small>Ddiba</small>
-            <strong>Dashboard</strong>
-          </div>
-        </div>
-
-        <div className="dashboard-header-actions">
-          <span className="header-streak-pill"><Icon name="flame" /> 5</span>
-          <div className="dashboard-avatar">S</div>
-        </div>
-      </header>
+    <ResponsiveLayout className="dashboard-page prototype-dashboard-page">
+      <PageHeader
+        variant="dashboard"
+        title="Dashboard"
+        logoSize={39}
+        rightContent={<span className="header-streak-pill"><Icon name="flame" /> 5</span>}
+        onAvatarClick={() => navigate("/onboarding/profile")}
+      />
 
       <section className="dashboard-greeting">
         <div>
-          <h1>Hi, Sarah 👋</h1>
+          <h1>Hi, Sarah <span aria-hidden="true">👋</span></h1>
 
           <p>
             Ready to learn something joyful today?
@@ -50,15 +43,12 @@ export default function Dashboard() {
 
           <div>
             <div className="dashboard-streak-title-row">
-              <h2>4 Day Streak!</h2>
-
-              <span>Steady pace</span>
+              <h2>5 Day Streak!</h2>
+              <span>+120 XP</span>
             </div>
 
             <p>
-              You're building steady momentum.
-              <br />
-              Keep it up!
+              Joyful, pressure-free learning every day.
             </p>
           </div>
         </div>
@@ -73,10 +63,10 @@ export default function Dashboard() {
 
               <div
                 className={`dashboard-day-circle ${
-                  index < 4 ? "active" : ""
+                  index < 5 ? "active" : ""
                 }`}
               >
-                {index < 4 ? <Icon name="flame" /> : "•"}
+                {index < 5 ? <Icon name="flame" /> : index + 1}
               </div>
             </div>
           ))}
@@ -94,16 +84,13 @@ export default function Dashboard() {
             <Icon name="sparkle" />
           </div>
 
-          <span className="dashboard-mode-pill purple-pill">
-            AI Explanations
-          </span>
+          <span className="dashboard-mode-pill purple-pill">Adapted Reading</span>
         </div>
 
         <h2>Understand <Icon name="sparkle" /></h2>
 
         <p>
-          Break down tough concepts into simple,
-          friendly ideas & intuitive analogies.
+          Break down tough textbooks and notes into simple, visual, chunked lessons.
         </p>
 
         <button
@@ -120,35 +107,26 @@ export default function Dashboard() {
             <Icon name="brain" />
           </div>
 
-          <span className="dashboard-mode-pill green-pill">
-            Zero-Stress
-          </span>
+          <span className="dashboard-mode-pill green-pill">Gentle Recall</span>
         </div>
 
         <h2>Practice <Icon name="brain" /></h2>
 
         <p>
-          Test your understanding with gentle,
-          supportive quizzes that adapt to your pace.
+          Test your understanding with gentle, non-stress questions and zero timers.
         </p>
 
         <button
           className="dashboard-mode-btn green"
           onClick={() => navigate("/practice")}
         >
-          Quick Quiz ⚡
+          Start Practice <Icon name="arrowRight" />
         </button>
       </section>
 
       <div className="dashboard-section-heading">
         <h3>Continue Learning</h3>
-
-        <button
-          type="button"
-          onClick={() => navigate("/progress")}
-        >
-          View all
-        </button>
+        <button type="button" onClick={() => navigate("/progress")}>View all</button>
       </div>
 
       <section className="dashboard-continue-card">
@@ -157,12 +135,11 @@ export default function Dashboard() {
         </div>
 
         <div className="dashboard-topic-copy">
-          <span>Biology</span>
-
+          <span>Continue Reading</span>
           <h3>Light Reactions</h3>
 
           <p>
-            Last studied 12 mins ago
+            78% understood • Step 2 of 3
           </p>
 
           <div className="dashboard-topic-progress">
@@ -178,36 +155,25 @@ export default function Dashboard() {
         </button>
       </section>
 
-      <nav className="dashboard-bottom-nav">
-        <button
-          className="active"
-          onClick={() => navigate("/dashboard")}
-        >
-          <span><Icon name="book" /></span>
-          <small>Learn</small>
+      <div className="dashboard-quick-tools">
+        <button type="button" className="dashboard-quick-tool" onClick={() => navigate("/flashcards")}>
+          <span className="dashboard-quick-tool-icon"><Icon name="book" /></span>
+          <span>
+            <strong>Flashcards</strong>
+            <span>15 cards due</span>
+          </span>
         </button>
 
-        <button
-          onClick={() => navigate("/practice")}
-        >
-          <span><Icon name="play" /></span>
-          <small>Practice</small>
+        <button type="button" className="dashboard-quick-tool" onClick={() => navigate("/subscription")}>
+          <span className="dashboard-quick-tool-icon"><Icon name="sparkle" /></span>
+          <span>
+            <strong>Free Tier</strong>
+            <span>Unlimited mode</span>
+          </span>
         </button>
+      </div>
 
-        <button
-          onClick={() => navigate("/upload")}
-        >
-          <span><Icon name="file" /></span>
-          <small>Notes</small>
-        </button>
-
-        <button
-          onClick={() => navigate("/progress")}
-        >
-          <span><Icon name="chart" /></span>
-          <small>Progress</small>
-        </button>
-      </nav>
+      <BottomNav />
     </ResponsiveLayout>
   );
 }
