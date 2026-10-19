@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { apiFetch } from "./services/api";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Welcome from "./pages/Welcome";
 import Auth from "./pages/Auth";
@@ -15,13 +16,36 @@ import Progress from "./pages/Progress";
 import FlashcardDeck from "./pages/FlashcardDeck";
 import SessionSummary from "./pages/SessionSummary";
 import Subscription from "./pages/Subscription";
+import Flashcards from "./pages/Flashcards";
+import Pricing from "./pages/Pricing";
+import Settings from "./pages/Settings";
 
 function ProtectedRoute({ children }) {
   const location = useLocation();
   const token = localStorage.getItem("ddiba_token");
 
-  if (!token) {
-    return <Navigate to="/auth" replace state={{ from: location.pathname }} />;
+  const [loaded, setLoaded] = useState(null);
+  const [error, setError] = useState("");
+  const [attempt, setAttempt] = useState(0);
+  useEffect(() => {
+    let active = true;
+
+    setError("");
+    if (token) apiFetch("/api/profile/").then(data => {
+      if (active) setLoaded({path: location.pathname, token, profile: data});
+    }).catch(err => { if (active) setError(err.message); });
+    return () => { active = false; };
+  }, [token, location.pathname, attempt]);
+  if (!token) return <Navigate to="/auth" replace state={{ from: location.pathname }} />;
+  if (error) return <div role="alert"><p>{error}</p><button onClick={() => setAttempt(value => value + 1)}>Try again</button><a href="/auth">Sign in</a></div>;
+  if (!loaded || loaded.path !== location.pathname || loaded.token !== token) return <p role="status">Loading your learning profile…</p>;
+  const profile = loaded.profile;
+  if (!profile.onboarding_complete && !location.pathname.startsWith("/onboarding")) {
+    return <Navigate to="/onboarding" replace />;
+  }
+
+  if (profile.onboarding_complete && location.pathname.startsWith("/onboarding")) {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return children;
@@ -45,15 +69,21 @@ export default function App() {
       <Route path="/onboarding/explanations" element={<ProtectedRoute><ExplanationPreference /></ProtectedRoute>} />
       <Route path="/onboarding/reading-support" element={<ProtectedRoute><ReadingSupport /></ProtectedRoute>} />
       <Route path="/onboarding/profile" element={<ProtectedRoute><ProfileSummary /></ProtectedRoute>} />
+      <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/upload" element={<ProtectedRoute><UploadMaterial /></ProtectedRoute>} />
       <Route path="/lesson" element={<ProtectedRoute><LessonView /></ProtectedRoute>} />
       <Route path="/practice" element={<ProtectedRoute><Practice /></ProtectedRoute>} />
       <Route path="/progress" element={<ProtectedRoute><Progress /></ProtectedRoute>} />
-      <Route path="/flashcards" element={<ProtectedRoute><FlashcardDeck /></ProtectedRoute>} />
+      <Route path="/flashcards" element={<ProtectedRoute><Flashcards /></ProtectedRoute>} />
       <Route path="/session-summary" element={<ProtectedRoute><SessionSummary /></ProtectedRoute>} />
       <Route path="/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
+      <Route
+        path="/pricing"
+        element={<Pricing />}
+      />
+
     </Routes>
   );
 }

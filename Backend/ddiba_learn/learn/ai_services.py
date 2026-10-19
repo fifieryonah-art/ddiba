@@ -1,7 +1,6 @@
 from openai import OpenAI
 from django.conf import settings
 
-client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
 def adapt_content(text, mode="simplify"):
     """
@@ -16,6 +15,7 @@ def adapt_content(text, mode="simplify"):
 
     prompt = prompt_map.get(mode, prompt_map["simplify"])
 
+    client = OpenAI(api_key=settings.OPENAI_API_KEY)
     response = client.chat.completions.create(
         model="gpt-4o",
         max_tokens=1000,

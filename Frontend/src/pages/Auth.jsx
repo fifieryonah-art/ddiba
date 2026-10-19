@@ -61,7 +61,7 @@ export default function Auth() {
             if (data.first_name) {
               localStorage.setItem("ddiba_name", data.first_name);
             }
-            navigate(location.state?.from || "/dashboard", { replace: true });
+            navigate(data.onboarding_complete ? (location.state?.from || "/dashboard") : "/onboarding", { replace: true });
           } catch (googleError) {
             setError(googleError.message || "Google sign-in failed. Please try email instead.");
           } finally {
@@ -170,7 +170,7 @@ export default function Auth() {
         );
       }
 
-      const destination = isSignup
+      const destination = !data.onboarding_complete
         ? "/onboarding"
         : location.state?.from ||
           "/dashboard";
@@ -193,7 +193,7 @@ export default function Auth() {
         )
       ) {
         setError(
-          "The learning service is offline. Start the backend and try again."
+          "We could not reach the learning service. Please wait a minute and try again."
         );
       } else {
         setError(

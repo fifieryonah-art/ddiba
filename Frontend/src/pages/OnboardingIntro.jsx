@@ -91,9 +91,9 @@ export default function OnboardingIntro() {
 
       <button
         className="onboarding-skip-btn"
-        onClick={() => navigate("/dashboard")}
+        onClick={() => navigate("/onboarding/learning-style")}
       >
-        Skip for now
+        Set up my preferences
       </button>
 
     </ResponsiveLayout>

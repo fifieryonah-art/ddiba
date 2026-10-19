@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Icon from "../components/ui/Icon";
 import ResponsiveLayout from "../components/layout/ResponsiveLayout";
-import PageHeader from "../components/layout/PageHeader";
+import LogoMark from "../components/Logo/LogoMark";
+import { apiFetch } from "../services/api";
 
 const explanationOptions = [
   {
@@ -37,23 +38,71 @@ const explanationOptions = [
 export default function ExplanationPreference() {
   const navigate = useNavigate();
 
-  const [selected, setSelected] = useState([
-    "simple",
-    "breakdown",
-  ]);
+  const [selected, setSelected] = useState([]);
+  useEffect(() => {
+    apiFetch("/api/profile/").then(profile => setSelected(profile.explanation_depth ? [profile.explanation_depth] : []))
+      .catch(err => setError(err.message)).finally(() => setLoaded(true));
+  }, []);
+
+  const [saving, setSaving] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState("");
 
   const toggleOption = (id) => {
-    setSelected((current) =>
-      current.includes(id)
-        ? current.filter((item) => item !== id)
-        : [...current, id]
-    );
+    setSelected([id]);
+  };
+
+  const handleNext = async () => {
+    try {
+      setSaving(true);
+      setError("");
+
+      await apiFetch("/api/profile/", {
+        method: "PATCH",
+        body: JSON.stringify({
+          explanation_depth: selected[0],
+        }),
+      });
+
+      navigate("/onboarding/reading-support");
+    } catch (err) {
+      console.error(err);
+
+      setError(
+        err.message ||
+          "Something went wrong while saving your preferences."
+      );
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
     <ResponsiveLayout className="explanation-page">
 
-      <PageHeader title="Onboarding Goals" backTo="/onboarding/learning-style" />
+      <header className="onboarding-topbar">
+
+        <button
+          className="onboarding-back-btn"
+          onClick={() =>
+            navigate("/onboarding/learning-style")
+          }
+          aria-label="Go back"
+          disabled={saving || !loaded}
+        >
+          <Icon name="arrowLeft" />
+        </button>
+
+        <div className="onboarding-brand">
+          <LogoMark size={31} />
+          <span>Onboarding Goals</span>
+        </div>
+
+        <div className="onboarding-avatar">
+          S
+        </div>
+
+      </header>
 
       <section className="explanation-progress">
 
@@ -91,7 +140,8 @@ export default function ExplanationPreference() {
       <section className="explanation-options">
 
         {explanationOptions.map((option) => {
-          const isSelected = selected.includes(option.id);
+          const isSelected =
+            selected.includes(option.id);
 
           return (
             <button
@@ -100,7 +150,10 @@ export default function ExplanationPreference() {
               className={`explanation-card ${
                 isSelected ? "selected" : ""
               }`}
-              onClick={() => toggleOption(option.id)}
+              onClick={() =>
+                toggleOption(option.id)
+              }
+              disabled={saving || !loaded}
             >
 
               <div className="explanation-icon">
@@ -135,6 +188,21 @@ export default function ExplanationPreference() {
 
       </section>
 
+      {error && (
+        <div
+          style={{
+            marginTop: "14px",
+            padding: "11px 12px",
+            borderRadius: "12px",
+            background: "#fff0f2",
+            color: "#a2394a",
+            fontSize: "12px",
+          }}
+        >
+          {error}
+        </div>
+      )}
+
       <div className="explanation-actions">
 
         <button
@@ -142,17 +210,23 @@ export default function ExplanationPreference() {
           onClick={() =>
             navigate("/onboarding/learning-style")
           }
+          disabled={saving || !loaded}
         >
           <Icon name="arrowLeft" /> Back
         </button>
 
         <button
           className="explanation-next-action"
-          onClick={() =>
-            navigate("/onboarding/reading-support")
-          }
+          onClick={handleNext}
+          disabled={saving || !loaded || selected.length === 0}
         >
-          Next <Icon name="arrowRight" />
+          {saving ? (
+            "Saving..."
+          ) : (
+            <>
+              Next <Icon name="arrowRight" />
+            </>
+          )}
         </button>
 
       </div>

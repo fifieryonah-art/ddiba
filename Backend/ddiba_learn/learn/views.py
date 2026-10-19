@@ -8,6 +8,7 @@ from .ai_services import adapt_content
 from .serializers import GoogleLoginSerializer, LoginSerializer, RegisterSerializer
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from api.models import LearnerProfile
 
 User = get_user_model()
 
@@ -30,7 +31,7 @@ def register_view(request):
     if serializer.is_valid():
         user = serializer.save()
         token, _ = Token.objects.get_or_create(user=user)
-        return Response({"token": token.key, "username": user.username}, status=201)
+        return Response({"token": token.key, "username": user.username, "first_name": user.first_name, "onboarding_complete": LearnerProfile.objects.get_or_create(user=user)[0].onboarding_complete}, status=201)
     return Response(serializer.errors, status=400)
 
 
@@ -41,7 +42,7 @@ def login_view(request):
     if serializer.is_valid():
         user = serializer.validated_data["user"]
         token, _ = Token.objects.get_or_create(user=user)
-        return Response({"token": token.key, "username": user.username})
+        return Response({"token": token.key, "username": user.username, "first_name": user.first_name, "onboarding_complete": LearnerProfile.objects.get_or_create(user=user)[0].onboarding_complete})
     return Response(serializer.errors, status=400)
 
 
@@ -50,6 +51,9 @@ def login_view(request):
 def google_login_view(request):
     serializer = GoogleLoginSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
+
+    if not settings.GOOGLE_CLIENT_ID:
+        return Response({"detail": "Google sign-in is not configured."}, status=503)
 
     try:
         google_user = id_token.verify_oauth2_token(
@@ -83,4 +87,5 @@ def google_login_view(request):
         "token": token.key,
         "username": user.username,
         "first_name": user.first_name,
+        "onboarding_complete": LearnerProfile.objects.get_or_create(user=user)[0].onboarding_complete,
     })
