@@ -131,3 +131,22 @@ class PersonalizationTests(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION=f"Token {response.data['token']}")
         self.assertEqual(self.client.get("/api/profile/").data["learning_styles"], [])
         self.assertEqual(self.client.get("/api/dashboard/").data["xp"], 0)
+
+    def test_onboarding_is_once_and_settings_do_not_reset_completion(self):
+        self.signup()
+        response = self.client.patch("/api/profile/", {
+            "learning_styles": ["visual"], "explanation_depth": "simple",
+            "onboarding_complete": True,
+        }, format="json")
+        self.assertTrue(response.data["onboarding_complete"])
+        for _ in range(2):
+            response = self.client.post("/api/login/", {
+                "username": "learner@example.com", "password": "Testing-learning-987!",
+            }, format="json")
+            self.assertTrue(response.data["onboarding_complete"])
+            self.assertEqual(self.client.get("/api/dashboard/").status_code, 200)
+        response = self.client.patch("/api/profile/", {
+            "learning_styles": ["audio"], "pace": "quick",
+        }, format="json")
+        self.assertTrue(response.data["onboarding_complete"])
+        self.assertEqual(response.data["learning_styles"], ["audio"])

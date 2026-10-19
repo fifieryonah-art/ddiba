@@ -140,10 +140,10 @@ export default function Dashboard() {
           </p>
         </div>
 
-        <div className="dashboard-profile-picture">
+        <button type="button" aria-label="Learning settings" onClick={() => navigate("/settings")} className="dashboard-profile-picture">
           <span>{initial}</span>
           <i></i>
-        </div>
+        </button>
 
       </section>
 
