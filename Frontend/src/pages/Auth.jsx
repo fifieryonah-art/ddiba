@@ -11,19 +11,13 @@ import { apiUrl } from "../api";
 
 export default function Auth() {
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const [mode, setMode] = useState("signup");
+  const [mode, setMode] = useState("register");
+
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const [showPassword, setShowPassword] =
-    useState(false);
-
-  const [isSubmitting, setIsSubmitting] =
-    useState(false);
-
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const googleButtonRef = useRef(null);
 
@@ -93,8 +87,10 @@ export default function Auth() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    setError("");
-    setIsSubmitting(true);
+    if (!name.trim() || !password.trim()) {
+      setError("Please enter your name and password.");
+      return;
+    }
 
     try {
       const endpoint = isSignup
@@ -126,24 +122,32 @@ export default function Auth() {
         }
       );
 
-      let data;
+      const endpoint =
+        mode === "register"
+          ? `${API_BASE_URL}/api/register/`
+          : `${API_BASE_URL}/api/login/`;
+      const response = await fetch(endpoint, {
+        method: "POST",
 
-      try {
-        data = await response.json();
-      } catch {
-        throw new Error(
-          "The server returned an unexpected response."
-        );
-      }
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          username: name.trim(),
+          password,
+        }),
+      });
+
+      const data = await response.json();
 
       if (!response.ok) {
-        const message =
+        let message =
           data.detail ||
           data.non_field_errors?.[0] ||
           data.username?.[0] ||
-          data.email?.[0] ||
           data.password?.[0] ||
-          "We could not complete that request.";
+          "Authentication failed.";
 
         throw new Error(message);
       }
@@ -158,249 +162,158 @@ export default function Auth() {
         data.username
       );
 
-      if (data.first_name) {
-        localStorage.setItem(
-          "ddiba_name",
-          data.first_name
-        );
-      } else if (name.trim()) {
-        localStorage.setItem(
-          "ddiba_name",
-          name.trim()
-        );
-      }
-
-      const destination = isSignup
-        ? "/onboarding"
-        : location.state?.from ||
-          "/dashboard";
-
-      navigate(
-        destination,
-        {
-          replace: true,
-        }
-      );
-    } catch (submitError) {
-      console.error(
-        "Authentication error:",
-        submitError
-      );
-
-      if (
-        submitError.message?.includes(
-          "Failed to fetch"
-        )
-      ) {
-        setError(
-          "The learning service is offline. Start the backend and try again."
-        );
+      if (mode === "register") {
+        navigate("/onboarding");
       } else {
-        setError(
-          submitError.message ||
-            "Something went wrong. Please try again."
-        );
+        navigate("/dashboard");
       }
+
+    } catch (err) {
+      console.error(err);
+
+      setError(
+        err.message ||
+        "Something went wrong. Please try again."
+      );
+
     } finally {
-      setIsSubmitting(false);
+      setLoading(false);
     }
   };
 
-  const switchMode = (newMode) => {
-    setMode(newMode);
-    setError("");
-    setPassword("");
-  };
-
   return (
-    <ResponsiveLayout
-      className="auth-page prototype-auth-page"
-    >
-      <PageHeader
-        variant="auth"
-        title="Ddiba"
-        backTo="/"
-        logoSize={32}
-      />
+    <ResponsiveLayout className="auth-page">
 
-      <div className="prototype-auth-main">
-
-        <div className="prototype-auth-tabs">
-
-          <button
-            type="button"
-            className={
-              isSignup
-                ? "active"
-                : ""
-            }
-            onClick={() =>
-              switchMode("signup")
-            }
-          >
-            Sign Up
-          </button>
-
-          <button
-            type="button"
-            className={
-              !isSignup
-                ? "active"
-                : ""
-            }
-            onClick={() =>
-              switchMode("login")
-            }
-          >
-            Log In
-          </button>
-
+      <header className="auth-brand">
+        <div className="auth-brand-logo">
+          ⌣
         </div>
 
-        <div className="prototype-auth-title">
+        <strong>Ddiba</strong>
+      </header>
 
-          <h1>
-            {isSignup
-              ? "Create your calm space"
-              : "Welcome back, learner"}
-          </h1>
+      <section className="auth-title">
+
+        <h1>
+          {mode === "register"
+            ? "Learn your way."
+            : "Welcome back."}
+        </h1>
+
+      </section>
+
+      <div className="auth-actions">
+
+        <button
+          className="social-login-btn"
+          type="button"
+          disabled
+        >
+          <img
+            className="social-icon"
+            src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
+            alt=""
+            aria-hidden="true"
+          />
+
+          Continue with Google
+        </button>
+
+        <div className="auth-divider">
+
+          <span></span>
 
           <p>
-            {isSignup
-              ? "Tell us how you like to learn so we can adapt every lesson."
-              : "Pick up right where you left off, at your own pace."}
+            {mode === "register"
+              ? "Or sign up with your name"
+              : "Or log in with your name"}
           </p>
+
+          <span></span>
 
         </div>
 
         <form
-          className="prototype-auth-form"
+          className="auth-form"
           onSubmit={handleSubmit}
         >
 
-          {isSignup && (
-            <label>
-              Your Preferred Name
+          <label className="auth-field">
 
-              <input
-                type="text"
-                name="name"
-                required
-                value={name}
-                onChange={(event) =>
-                  setName(
-                    event.target.value
-                  )
-                }
-                placeholder="e.g. Sarah"
-                autoComplete="name"
-              />
-
-            </label>
-          )}
-
-          <label>
-            Email Address
+            Name
 
             <input
-              type="email"
-              name="email"
-              required
-              value={email}
+              type="text"
+              name="name"
+              placeholder="Your name"
+              autoComplete="username"
+              value={name}
               onChange={(event) =>
-                setEmail(
-                  event.target.value
-                )
+                setName(event.target.value)
               }
-              placeholder="student@example.com"
-              autoComplete="email"
+              required
             />
 
           </label>
 
-          <label>
+          <label className="auth-field">
+
             Password
 
-            <div
-              style={{
-                position: "relative",
-              }}
-            >
-
-              <input
-                type={
-                  showPassword
-                    ? "text"
-                    : "password"
-                }
-                name="password"
-                required
-                value={password}
-                onChange={(event) =>
-                  setPassword(
-                    event.target.value
-                  )
-                }
-                placeholder="••••••••"
-                autoComplete={
-                  isSignup
-                    ? "new-password"
-                    : "current-password"
-                }
-                minLength={
-                  isSignup
-                    ? 8
-                    : undefined
-                }
-                style={{
-                  width: "100%",
-                  boxSizing: "border-box",
-                }}
-              />
-
-              <button
-                type="button"
-                className="auth-password-toggle"
-                onClick={() =>
-                  setShowPassword(
-                    (visible) =>
-                      !visible
-                  )
-                }
-              >
-                {showPassword
-                  ? "Hide"
-                  : "Show"}
-              </button>
-
-            </div>
+            <input
+              type="password"
+              name="password"
+              placeholder={
+                mode === "register"
+                  ? "Create a password"
+                  : "Enter your password"
+              }
+              autoComplete={
+                mode === "register"
+                  ? "new-password"
+                  : "current-password"
+              }
+              value={password}
+              onChange={(event) =>
+                setPassword(event.target.value)
+              }
+              minLength={8}
+              required
+            />
 
           </label>
 
           {error && (
-            <p
-              className="auth-error"
-              role="alert"
+            <div
+              style={{
+                padding: "11px 12px",
+                borderRadius: "12px",
+                background: "#fff0f2",
+                color: "#a2394a",
+                fontSize: "12px",
+              }}
             >
               {error}
-            </p>
+            </div>
           )}
 
           <button
             type="submit"
-            className="auth-main-btn prototype-auth-submit"
-            disabled={isSubmitting}
+            className="auth-main-btn"
+            disabled={loading}
           >
 
-            {isSubmitting
-              ? "Connecting..."
-              : isSignup
-              ? "Start Onboarding"
-              : "Go to Dashboard"}
-
-            {!isSubmitting && (
-              <Icon name="arrowRight" />
-            )}
+            {loading
+              ? (
+                mode === "register"
+                  ? "Creating account..."
+                  : "Logging in..."
+              )
+              : (
+                mode === "register"
+                  ? "Create account"
+                  : "Log in"
+              )}
 
           </button>
 
@@ -413,22 +326,6 @@ export default function Auth() {
         </div>
 
         <div ref={googleButtonRef} className="google-signin-btn" aria-label="Continue with Google" />
-
-      </div>
-
-      <div className="prototype-auth-pledge">
-
-        <Icon name="sparkle" />
-
-        <p>
-          <strong>
-            The Ddiba Pledge
-          </strong>
-
-          No public scores, no timed
-          pressure, and no penalties
-          for taking breaks.
-        </p>
 
       </div>
 

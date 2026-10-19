@@ -43,11 +43,24 @@ class PreferencesSerializer(serializers.Serializer):
 
 class AdaptLessonSerializer(serializers.Serializer):
     text = serializers.CharField()
+
+    subject = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        default="General",
+    )
+
     preferences = PreferencesSerializer(required=False)
 
 
 class PracticeQuestionsSerializer(serializers.Serializer):
     adapted_text = serializers.CharField()
+
+    subject = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        default="General",
+    )
 
 
 class EvaluateAnswerSerializer(serializers.Serializer):
@@ -55,10 +68,17 @@ class EvaluateAnswerSerializer(serializers.Serializer):
     student_answer = serializers.CharField()
     reference_answer = serializers.CharField()
 
+    subject = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        default="General",
+    )
+
 
 class LearnerProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = LearnerProfile
+
         fields = [
             "id",
             "short_explanations",
@@ -80,6 +100,7 @@ class LearnerProfileSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+
         read_only_fields = [
             "id",
             "onboarding_complete",

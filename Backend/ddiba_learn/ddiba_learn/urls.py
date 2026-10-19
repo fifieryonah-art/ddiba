@@ -1,36 +1,25 @@
-"""
-URL configuration for ddiba_learn project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/6.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-# from django.contrib import admin
-# from django.urls import path
-
 from django.contrib import admin
 from django.urls import include, path
-from api.views import test_api
-from api.views import submit_onboarding
 
 from api.views import (
     adapt_lesson,
     practice_questions,
     evaluate_answer,
     learner_profile,
+    submit_onboarding,
+    dashboard_data,
+    progress_data,
+    extract_file,
+    voice_chat,
+    test_api,
 )
 
+
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    path(
+        "admin/",
+        admin.site.urls,
+    ),
 
     path(
         "api/adapt-lesson/",
@@ -56,6 +45,44 @@ urlpatterns = [
         name="learner_profile",
     ),
 
-    path("api/onboarding/", submit_onboarding, name="submit_onboarding"),
-    path("api/", include("learn.urls")),
+    path(
+        "api/onboarding/",
+        submit_onboarding,
+        name="submit_onboarding",
+    ),
+
+    path(
+        "api/dashboard/",
+        dashboard_data,
+        name="dashboard_data",
+    ),
+
+    path(
+        "api/progress/",
+        progress_data,
+        name="progress_data",
+    ),
+
+    path(
+        "api/extract-file/",
+        extract_file,
+        name="extract_file",
+    ),
+
+    path(
+        "api/voice-chat/",
+        voice_chat,
+        name="voice_chat",
+    ),
+
+    path(
+        "api/test/",
+        test_api,
+        name="test_api",
+    ),
+
+    path(
+        "api/",
+        include("learn.urls"),
+    ),
 ]
