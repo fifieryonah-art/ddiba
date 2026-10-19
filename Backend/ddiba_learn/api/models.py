@@ -8,6 +8,7 @@ class LearnerProfile(models.Model):
         on_delete=models.CASCADE,
         related_name="learner_profile"
     )
+    learning_styles = models.JSONField(default=list, blank=True)
     short_explanations = models.BooleanField(default=True)
     step_by_step = models.BooleanField(default=True)
     examples = models.BooleanField(default=True)
@@ -113,3 +114,10 @@ class Result(models.Model):
 
     def __str__(self):
         return f"Result {self.pk}"
+
+class LearningActivity(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="learning_days")
+    date = models.DateField()
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["user", "date"], name="unique_learner_activity_day")]

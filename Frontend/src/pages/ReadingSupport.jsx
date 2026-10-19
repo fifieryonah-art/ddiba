@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Icon from "../components/ui/Icon";
 import ResponsiveLayout from "../components/layout/ResponsiveLayout";
@@ -46,13 +46,16 @@ const supportOptions = [
 export default function ReadingSupport() {
   const navigate = useNavigate();
 
-  const [enabled, setEnabled] = useState([
-    "largerText",
-    "spacing",
-    "shortParagraphs",
-  ]);
+  const [enabled, setEnabled] = useState([]);
+  useEffect(() => {
+    apiFetch("/api/profile/").then(profile => {
+      const fields = {largerText: "larger_text", spacing: "more_spacing", shortParagraphs: "shorter_paragraphs", highlight: "highlight_words", readAloud: "read_aloud"};
+      setEnabled(Object.keys(fields).filter(key => profile[fields[key]]));
+    }).catch(err => setError(err.message)).finally(() => setLoaded(true));
+  }, []);
 
   const [saving, setSaving] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState("");
 
   const toggleSupport = (id) => {
@@ -114,7 +117,7 @@ export default function ReadingSupport() {
             navigate("/onboarding/explanations")
           }
           aria-label="Go back"
-          disabled={saving}
+          disabled={saving || !loaded}
         >
           <Icon name="arrowLeft" />
         </button>
@@ -211,7 +214,7 @@ export default function ReadingSupport() {
               onClick={() =>
                 toggleSupport(option.id)
               }
-              disabled={saving}
+              disabled={saving || !loaded}
             >
 
               <div className="reading-support-icon">
@@ -260,7 +263,7 @@ export default function ReadingSupport() {
       <button
         className="reading-continue-btn"
         onClick={handleContinue}
-        disabled={saving}
+        disabled={saving || !loaded}
       >
         {saving ? (
           "Saving..."

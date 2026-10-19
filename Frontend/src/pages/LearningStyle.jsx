@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Icon from "../components/ui/Icon";
 import ResponsiveLayout from "../components/layout/ResponsiveLayout";
 import PageHeader from "../components/layout/PageHeader";
+
+import { apiFetch } from "../services/api";
 
 const learningOptions = [
   {
@@ -40,11 +42,29 @@ const learningOptions = [
 export default function LearningStyle() {
   const navigate = useNavigate();
 
-  const [selected, setSelected] = useState([
-    "visual",
-    "stepByStep",
-    "stories",
-  ]);
+  const [selected, setSelected] = useState([]);
+  const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    apiFetch("/api/profile/").then(profile => setSelected(profile.learning_styles || []))
+      .catch(err => setError(err.message)).finally(() => setLoading(false));
+  }, []);
+  const handleNext = async () => {
+    try {
+      setSaving(true);
+      setError("");
+      await apiFetch("/api/profile/", {method: "PATCH", body: JSON.stringify({
+        learning_styles: selected,
+        short_explanations: selected.includes("plain"),
+        step_by_step: selected.includes("stepByStep"),
+        examples: selected.includes("stories"),
+        listening_enabled: selected.includes("audio"),
+      })});
+      navigate("/onboarding/explanations");
+    } catch (err) { setError(err.message); }
+    finally { setSaving(false); }
+  };
 
   const toggleOption = (id) => {
     setSelected((current) =>
@@ -119,14 +139,11 @@ export default function LearningStyle() {
 
       </section>
 
+      {error && <p role="alert">{error}</p>}
       <button
         className="learning-next-btn"
-        disabled={selected.length === 0}
-        onClick={() => {
-          if (selected.length > 0) {
-            navigate("/onboarding/explanations");
-          }
-        }}
+        disabled={loading || saving || selected.length === 0}
+        onClick={handleNext}
       >
         Next <Icon name="arrowRight" />
       </button>

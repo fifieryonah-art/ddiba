@@ -1,4 +1,6 @@
 import os
+from datetime import timedelta
+from django.utils import timezone
 
 from docx import Document
 from pptx import Presentation
@@ -16,6 +18,7 @@ from rest_framework.response import Response
 
 from .models import (
     LearnerProfile,
+    LearningActivity,
     StudyMaterial,
     Result,
 )
@@ -115,14 +118,20 @@ def adapt_lesson(request):
         )
     )
 
-    preferences = (
-        serializer
-        .validated_data
-        .get(
-            "preferences",
-            {},
-        )
-    )
+    profile = get_profile(request.user)
+    preferences = {
+        "short_explanations": profile.short_explanations,
+        "step_by_step": profile.step_by_step,
+        "examples": profile.examples,
+        "pace": profile.pace,
+        "learning_styles": profile.learning_styles,
+        "explanation_depth": profile.explanation_depth,
+        "learning_goal": profile.learning_goal,
+        "shorter_paragraphs": profile.shorter_paragraphs,
+        "highlight_words": profile.highlight_words,
+        "listening_enabled": profile.listening_enabled,
+        **serializer.validated_data.get("preferences", {}),
+    }
 
     try:
         result = (
@@ -796,6 +805,17 @@ def dashboard_data(request):
         request.user
     )
 
+    today = timezone.localdate()
+    LearningActivity.objects.get_or_create(user=request.user, date=today)
+    activity_dates = set(LearningActivity.objects.filter(user=request.user).values_list("date", flat=True))
+    streak_days = 0
+    day = today
+    while day in activity_dates:
+        streak_days += 1
+        day -= timedelta(days=1)
+    monday = today - timedelta(days=today.weekday())
+    active_week_days = [(monday + timedelta(days=index)) in activity_dates for index in range(7)]
+
     latest_material = (
         StudyMaterial.objects
         .filter(
@@ -888,6 +908,10 @@ def dashboard_data(request):
 
     return Response(
         {
+            "streak_days": streak_days,
+            "active_week_days": active_week_days,
+            "xp": lessons_created * 20 + correct_answers * 10,
+            "onboarding_complete": profile.onboarding_complete,
             "learner_name":
                 learner_name,
 

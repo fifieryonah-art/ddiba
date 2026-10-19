@@ -76,11 +76,17 @@ class EvaluateAnswerSerializer(serializers.Serializer):
 
 
 class LearnerProfileSerializer(serializers.ModelSerializer):
+    learning_styles = serializers.ListField(
+        child=serializers.ChoiceField(choices=["visual", "stepByStep", "stories", "plain", "audio"]),
+        required=False,
+    )
+
     class Meta:
         model = LearnerProfile
 
         fields = [
             "id",
+            "learning_styles",
             "short_explanations",
             "step_by_step",
             "examples",
@@ -103,7 +109,6 @@ class LearnerProfileSerializer(serializers.ModelSerializer):
 
         read_only_fields = [
             "id",
-            "onboarding_complete",
             "questions_answered",
             "strong_topics",
             "weak_topics",

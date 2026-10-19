@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { apiFetch } from "./services/api";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Welcome from "./pages/Welcome";
 import Auth from "./pages/Auth";
@@ -22,8 +23,23 @@ function ProtectedRoute({ children }) {
   const location = useLocation();
   const token = localStorage.getItem("ddiba_token");
 
-  if (!token) {
-    return <Navigate to="/auth" replace state={{ from: location.pathname }} />;
+  const [profile, setProfile] = useState(null);
+  const [error, setError] = useState("");
+  const [attempt, setAttempt] = useState(0);
+  useEffect(() => {
+    let active = true;
+    setProfile(null);
+    setError("");
+    if (token) apiFetch("/api/profile/").then(data => {
+      if (active) setProfile(data);
+    }).catch(err => { if (active) setError(err.message); });
+    return () => { active = false; };
+  }, [token, location.pathname, attempt]);
+  if (!token) return <Navigate to="/auth" replace state={{ from: location.pathname }} />;
+  if (error) return <div role="alert"><p>{error}</p><button onClick={() => setAttempt(value => value + 1)}>Try again</button><a href="/auth">Sign in</a></div>;
+  if (!profile) return <p role="status">Loading your learning profile…</p>;
+  if (!profile.onboarding_complete && !location.pathname.startsWith("/onboarding")) {
+    return <Navigate to="/onboarding" replace />;
   }
 
   return children;

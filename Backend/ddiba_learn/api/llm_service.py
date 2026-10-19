@@ -197,6 +197,26 @@ def adapt_lesson_with_ai(
             "- Include simple real-world examples."
         )
 
+    style_instructions = {
+        "visual": "Use clear visual descriptions and simple text diagrams when useful.",
+        "stories": "Use relatable stories and analogies to explain ideas.",
+        "audio": "Use natural spoken phrasing suitable for listening aloud.",
+        "plain": "Use plain, direct language.",
+        "stepByStep": "Break explanations into numbered steps.",
+    }
+    for style in preferences.get("learning_styles", []):
+        if style in style_instructions:
+            preference_lines.append("- " + style_instructions[style])
+    depth = preferences.get("explanation_depth")
+    if depth:
+        preference_lines.append("- Explanation depth: " + str(depth))
+    if preferences.get("learning_goal"):
+        preference_lines.append("- Learner's study goal (context): " + str(preferences["learning_goal"]))
+    if preferences.get("shorter_paragraphs"):
+        preference_lines.append("- Use short paragraphs with one idea each.")
+    if preferences.get("highlight_words"):
+        preference_lines.append("- Identify and explain key terms.")
+
     pace = preferences.get(
         "pace",
         "gentle",

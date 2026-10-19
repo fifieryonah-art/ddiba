@@ -81,10 +81,10 @@ export default function Dashboard() {
     dashboard?.pace || "gentle";
 
   const streakDays =
-    dashboard?.streak_days ?? 5;
+    dashboard?.streak_days ?? 0;
 
   const xp =
-    dashboard?.xp ?? 120;
+    dashboard?.xp ?? 0;
 
   const weekDays = [
     "M",
@@ -198,7 +198,7 @@ export default function Dashboard() {
               {weekDays.map(
                 (day, index) => {
                   const active =
-                    index < streakDays;
+                    Boolean(dashboard?.active_week_days?.[index]);
 
                   return (
                     <div
@@ -417,10 +417,7 @@ export default function Dashboard() {
                   <div
                     style={{
                       width:
-                        `${Math.max(
-                          10,
-                          accuracy
-                        )}%`,
+                        `${accuracy}%`,
                     }}
                   />
 

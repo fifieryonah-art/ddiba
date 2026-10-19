@@ -15,7 +15,11 @@ export default function ProfileSummary() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const username = getUsername() || "Learner";
+  const [goal, setGoal] = useState("");
+  const [pace, setPace] = useState("gentle");
+  const [saving, setSaving] = useState(false);
+
+  const username = localStorage.getItem("ddiba_name") || getUsername() || "Learner";
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -28,6 +32,8 @@ export default function ProfileSummary() {
         );
 
         setProfile(data);
+        setGoal(data.learning_goal || "");
+        setPace(data.pace || "gentle");
 
       } catch (err) {
         console.error(err);
@@ -45,7 +51,21 @@ export default function ProfileSummary() {
     loadProfile();
   }, []);
 
-  const accommodations = [];
+  const finishOnboarding = async () => {
+    try {
+      setSaving(true);
+      setError("");
+      await apiFetch("/api/profile/", {method: "PATCH", body: JSON.stringify({
+        learning_goal: goal.trim(), pace, onboarding_complete: true,
+      })});
+      navigate("/dashboard");
+    } catch (err) { setError(err.message); }
+    finally { setSaving(false); }
+  };
+
+  const styleNames = {visual: "Visual descriptions and diagrams", stories: "Stories and analogies", audio: "Audio and listening", plain: "Plain, direct language", stepByStep: "Step-by-step learning"};
+  const accommodations = (profile?.learning_styles || []).map(style => styleNames[style]).filter(Boolean);
+  if (profile?.explanation_depth) accommodations.push({simple: "Simple explanations", breakdown: "Detailed breakdowns", deep: "Deeper explanations"}[profile.explanation_depth]);
 
   if (profile?.short_explanations) {
     accommodations.push(
@@ -263,6 +283,16 @@ export default function ProfileSummary() {
         </>
       )}
 
+      {!loading && <section className="accommodations-card">
+        <label htmlFor="learning-goal">What would you like help learning?</label>
+        <input id="learning-goal" value={goal} maxLength={255} placeholder="For example, understanding biology lessons" onChange={event => setGoal(event.target.value)} />
+        <label htmlFor="learning-pace">What pace feels comfortable?</label>
+        <select id="learning-pace" value={pace} onChange={event => setPace(event.target.value)}>
+          <option value="gentle">Gentle, with time to pause</option>
+          <option value="steady">Steady, one idea at a time</option>
+          <option value="quick">Quick, with concise explanations</option>
+        </select>
+      </section>}
       <section className="ddiba-promise-card">
 
         <div className="promise-icon">
@@ -284,10 +314,8 @@ export default function ProfileSummary() {
 
       <button
         className="profile-start-btn"
-        onClick={() =>
-          navigate("/dashboard")
-        }
-        disabled={loading}
+        onClick={finishOnboarding}
+        disabled={loading || saving || !profile}
       >
         Start Learning{" "}
         <Icon name="arrowRight" />

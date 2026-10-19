@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Icon from "../components/ui/Icon";
 import ResponsiveLayout from "../components/layout/ResponsiveLayout";
@@ -38,20 +38,18 @@ const explanationOptions = [
 export default function ExplanationPreference() {
   const navigate = useNavigate();
 
-  const [selected, setSelected] = useState([
-    "simple",
-    "breakdown",
-  ]);
+  const [selected, setSelected] = useState([]);
+  useEffect(() => {
+    apiFetch("/api/profile/").then(profile => setSelected(profile.explanation_depth ? [profile.explanation_depth] : []))
+      .catch(err => setError(err.message)).finally(() => setLoaded(true));
+  }, []);
 
   const [saving, setSaving] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState("");
 
   const toggleOption = (id) => {
-    setSelected((current) =>
-      current.includes(id)
-        ? current.filter((item) => item !== id)
-        : [...current, id]
-    );
+    setSelected([id]);
   };
 
   const handleNext = async () => {
@@ -62,8 +60,7 @@ export default function ExplanationPreference() {
       await apiFetch("/api/profile/", {
         method: "PATCH",
         body: JSON.stringify({
-          short_explanations: selected.includes("simple"),
-          step_by_step: selected.includes("breakdown"),
+          explanation_depth: selected[0],
         }),
       });
 
@@ -91,7 +88,7 @@ export default function ExplanationPreference() {
             navigate("/onboarding/learning-style")
           }
           aria-label="Go back"
-          disabled={saving}
+          disabled={saving || !loaded}
         >
           <Icon name="arrowLeft" />
         </button>
@@ -156,7 +153,7 @@ export default function ExplanationPreference() {
               onClick={() =>
                 toggleOption(option.id)
               }
-              disabled={saving}
+              disabled={saving || !loaded}
             >
 
               <div className="explanation-icon">
@@ -213,7 +210,7 @@ export default function ExplanationPreference() {
           onClick={() =>
             navigate("/onboarding/learning-style")
           }
-          disabled={saving}
+          disabled={saving || !loaded}
         >
           <Icon name="arrowLeft" /> Back
         </button>
@@ -221,7 +218,7 @@ export default function ExplanationPreference() {
         <button
           className="explanation-next-action"
           onClick={handleNext}
-          disabled={saving}
+          disabled={saving || !loaded || selected.length === 0}
         >
           {saving ? (
             "Saving..."
