@@ -5,8 +5,21 @@ import {
 } from "react-router-dom";
 import Icon from "../components/ui/Icon";
 import ResponsiveLayout from "../components/layout/ResponsiveLayout";
-import LogoMark from "../components/Logo/LogoMark";
-import { apiFetch } from "../services/api";
+import PageHeader from "../components/layout/PageHeader";
+import BottomNav from "../components/layout/BottomNav";
+import { apiUrl, authHeaders } from "../api";
+
+const fallbackQuestions = [
+  {
+    question: "What is the primary fuel or ingredient that chlorophyll traps from the environment?",
+    answers: ["Carbon monoxide", "Sunlight energy", "Soil nitrogen", "Oxygen gas"],
+    correctAnswer: 1,
+    conceptTag: "Concept Check",
+    stepTag: "Step 2 • Light Energy",
+    explanation: "Chlorophyll acts like solar panels in leaf cells, absorbing sunlight energy to begin photosynthesis.",
+    hint: "Think back to the Solar Kitchen analogy. What provides the energy that starts the process?",
+  },
+];
 
 export default function Practice() {
   const navigate = useNavigate();
@@ -43,47 +56,37 @@ export default function Practice() {
     useState("");
 
   useEffect(() => {
-    const loadQuestions = async () => {
-      if (!adaptedText) {
-        setError(
-          "No adapted lesson was received. Please create a lesson first."
-        );
+    let cancelled = false;
 
-        setLoadingQuestions(false);
-        return;
-      }
+    fetch(apiUrl("/api/practice-questions/"), {
+      method: "POST",
+      headers: authHeaders({ "Content-Type": "application/json" }),
+      body: JSON.stringify({
+        adapted_text: "Photosynthesis uses sunlight, water, and carbon dioxide to make glucose and oxygen.",
+      }),
+    })
+      .then((response) => (response.ok ? response.json() : Promise.reject(new Error("Practice API unavailable"))))
+      .then((data) => {
+        const apiQuestions = (data.questions || [])
+          .filter((question) => question.type === "multiple_choice" && question.options?.length)
+          .map((question) => ({
+            question: question.question,
+            answers: question.options,
+            correctAnswer: Math.max(0, question.options.indexOf(question.reference_answer)),
+            conceptTag: "Concept Check",
+            stepTag: "Adaptive practice",
+            explanation: "Your answer matches the reference answer for this practice question.",
+            hint: "Review the lesson and try the question again.",
+          }));
 
-      try {
-        setLoadingQuestions(true);
-        setError("");
+        if (!cancelled && apiQuestions.length) setQuestions(apiQuestions);
+      })
+      .catch(() => {
+        // TODO: replace fallback data once the practice API is always available.
+      });
 
-        const data = await apiFetch(
-          "/api/practice-questions/",
-          {
-            method: "POST",
-            body: JSON.stringify({
-              adapted_text:
-                adaptedText,
-              subject,
-            }),
-          }
-        );
-
-        setQuestions(
-          data.questions || []
-        );
-
-      } catch (err) {
-        console.error(err);
-
-        setError(
-          err.message ||
-            "Something went wrong while generating practice questions."
-        );
-
-      } finally {
-        setLoadingQuestions(false);
-      }
+    return () => {
+      cancelled = true;
     };
 
     loadQuestions();

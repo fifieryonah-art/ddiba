@@ -1,14 +1,11 @@
 .env
-**/.env
-
-# Environment variables
-.env
-**/.env
-
-# Python
+.env.*
+!.env.example
 __pycache__/
 *.py[cod]
-
-# Local database
-db.sqlite3
-**/db.sqlite3
+*.sqlite3
+venv/
+.venv/
+node_modules/
+dist/
+staticfiles/

@@ -1,8 +1,13 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import ResponsiveLayout from "../components/layout/ResponsiveLayout";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 
-const API_BASE_URL = "http://127.0.0.1:8000";
+import Icon from "../components/ui/Icon";
+import ResponsiveLayout from "../components/layout/ResponsiveLayout";
+import PageHeader from "../components/layout/PageHeader";
+import { apiUrl } from "../api";
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -14,6 +19,70 @@ export default function Auth() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const googleButtonRef = useRef(null);
+
+  const isSignup = mode === "signup";
+
+  useEffect(() => {
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    let retryTimer;
+
+    const setupGoogleButton = () => {
+      if (!clientId || !window.google || !googleButtonRef.current) {
+        return false;
+      }
+
+      window.google.accounts.id.initialize({
+        client_id: clientId,
+        callback: async ({ credential }) => {
+          setError("");
+          setIsSubmitting(true);
+
+          try {
+            const response = await fetch(apiUrl("/api/google/"), {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ credential }),
+            });
+            const data = await response.json();
+
+            if (!response.ok) {
+              throw new Error(data.detail || "Google sign-in failed.");
+            }
+
+            localStorage.setItem("ddiba_token", data.token);
+            localStorage.setItem("ddiba_username", data.username);
+            if (data.first_name) {
+              localStorage.setItem("ddiba_name", data.first_name);
+            }
+            navigate(location.state?.from || "/dashboard", { replace: true });
+          } catch (googleError) {
+            setError(googleError.message || "Google sign-in failed. Please try email instead.");
+          } finally {
+            setIsSubmitting(false);
+          }
+        },
+      });
+
+      window.google.accounts.id.renderButton(googleButtonRef.current, {
+        theme: "outline",
+        size: "large",
+        width: 360,
+        text: "continue_with",
+      });
+      return true;
+    };
+
+    if (!setupGoogleButton()) {
+      retryTimer = window.setInterval(() => {
+        if (setupGoogleButton()) window.clearInterval(retryTimer);
+      }, 250);
+    }
+
+    return () => {
+      if (retryTimer) window.clearInterval(retryTimer);
+    };
+  }, [location.state, navigate]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -24,8 +93,34 @@ export default function Auth() {
     }
 
     try {
-      setLoading(true);
-      setError("");
+      const endpoint = isSignup
+        ? "register"
+        : "login";
+
+      const payload = isSignup
+        ? {
+            username: email.trim(),
+            email: email.trim(),
+            first_name: name.trim(),
+            password,
+          }
+        : {
+            username: email.trim(),
+            password,
+          };
+
+      const response = await fetch(
+        apiUrl(`/api/${endpoint}/`),
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          body: JSON.stringify(payload),
+        }
+      );
 
       const endpoint =
         mode === "register"
@@ -224,26 +319,13 @@ export default function Auth() {
 
         </form>
 
-        <button
-          type="button"
-          className="auth-login-btn"
-          disabled={loading}
-          onClick={() => {
-            setError("");
+        <div className="auth-divider">
+          <span></span>
+          <p>or</p>
+          <span></span>
+        </div>
 
-            setMode(
-              mode === "register"
-                ? "login"
-                : "register"
-            );
-          }}
-        >
-
-          {mode === "register"
-            ? "Already have an account? Log in"
-            : "New to Ddiba? Create an account"}
-
-        </button>
+        <div ref={googleButtonRef} className="google-signin-btn" aria-label="Continue with Google" />
 
       </div>
 
