@@ -51,6 +51,9 @@ def google_login_view(request):
     serializer = GoogleLoginSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 
+    if not settings.GOOGLE_CLIENT_ID:
+        return Response({"detail": "Google sign-in is not configured."}, status=503)
+
     try:
         google_user = id_token.verify_oauth2_token(
             serializer.validated_data["credential"],

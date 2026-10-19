@@ -193,7 +193,7 @@ export default function Auth() {
         )
       ) {
         setError(
-          "The learning service is offline. Start the backend and try again."
+          "We could not reach the learning service. Please wait a minute and try again."
         );
       } else {
         setError(

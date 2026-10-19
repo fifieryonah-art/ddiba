@@ -73,3 +73,18 @@ python manage.py runserver
 ## Team
 
 Built by Brendalynee, Tisha, Phiona, and Shalom for the Girl Code Hackathon, September 5-6, 2026.
+## Render deployment
+
+Deploy both services from the same branch containing the integrated backend and frontend.
+
+- Backend root: `Backend/ddiba_learn`; build: `bash build.sh`; start: `gunicorn ddiba_learn.wsgi:application`; health check: `/api/health/`.
+- Frontend root: `Frontend`; build: `npm ci && npm run build`; publish: `dist`; rewrite `/*` to `/index.html`.
+- Backend environment: `DJANGO_SECRET_KEY`, `DJANGO_DEBUG=False`, `DJANGO_ALLOWED_HOSTS=ddiba-learn.onrender.com`, `CORS_ALLOWED_ORIGINS=https://ddiba.onrender.com`, `GOOGLE_CLIENT_ID`, and `OPENAI_API_KEY`.
+- Frontend environment: `VITE_API_URL=https://ddiba-learn.onrender.com` and `VITE_GOOGLE_CLIENT_ID` (the same Google client ID as the backend).
+- Google OAuth JavaScript origin: `https://ddiba.onrender.com`; no redirect URI is required for the popup callback.
+
+Use your actual service URLs if they differ. Rebuild the frontend after changing its environment variables. `/` on the backend has no homepage; use `/api/health/` to check it.
+
+`DATABASE_URL` optionally enables PostgreSQL. Without it the backend uses SQLite, whose data is lost when Render replaces its free instance filesystem. Use a persistent external database to retain accounts and learning progress across deployments.
+
+Backend checks (from `Backend/ddiba_learn`): `python manage.py check` and `python manage.py test learn`.

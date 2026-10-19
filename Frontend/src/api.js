@@ -1,4 +1,7 @@
-const API_URL = (import.meta.env.VITE_API_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
+const API_URL = (
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.PROD ? "https://ddiba-learn.onrender.com" : "http://127.0.0.1:8000")
+).trim().replace(/\/+$/, "");
 
 export function apiUrl(path) {
   return `${API_URL}${path.startsWith("/") ? path : `/${path}`}`;
